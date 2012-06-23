@@ -2,6 +2,6 @@ base   ${project.artifactId}
 author Mark C. Prins
 email  mprins@users.sf.net
 date   ${buildNumber} (${project.version})
-name   ${project.artifactId} plugin, an addon for adding extra tilesets to your openlayersmap
+name   ${project.artifactId} plugin, an addon for adding extra maps to your openlayersmap
 desc   add overlay
-url    http://www.dokuwiki.org/plugin:overlayer
+url    ${project.url}
