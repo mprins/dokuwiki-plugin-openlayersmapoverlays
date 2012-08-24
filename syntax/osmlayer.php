@@ -15,8 +15,6 @@
 * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 */
 
-
-// must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
 if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
@@ -29,28 +27,52 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
 
 	private $dflt = array (
 			'id'			=> 'olmap',
-			'name'			=>'',
-			'url'			=>'',
-			'opacity'		=>1.0,
-			'attribution'	=>'',
-			'visible'		=>false,
-			'cors'			=>null
+			'name'			=> '',
+			'url'			=> '',
+			'opacity'		=> 0.8,
+			'attribution'	=> '',
+			'visible'		=> false,
+			'cors'			=> null
 	);
 
-	public function getType() {
-		//return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
-		return 'substition';
+	/**
+	 * (non-PHPdoc)
+	 * @see DokuWiki_Syntax_Plugin::getPType()
+	 */
+	public function getPType(){
+		return 'block';
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see DokuWiki_Syntax_Plugin::getType()
+	 */
+	public function getType() {
+		//return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
+		return 'baseonly';
+	}
+
+	/**
+	 * (non-PHPdoc)
+	 * @see Doku_Parser_Mode::getSort()
+	 */
 	public function getSort() {
 		return 902;
 	}
 
+	/**
+	 * Connect to our special pattern.
+	 * @see Doku_Parser_Mode::connectTo()
+	 */
 	public function connectTo($mode) {
 		//look for: <olmap_osmlayer id="olmap" name="sport" url="http://tiles.openseamap.org/sport/${z}/${x}/${y}.png" visible="false" opacity=0.6 attribution="Some attribution"></olmap_osmlayer>
 		$this->Lexer->addSpecialPattern('<olmap_osmlayer ?[^>\n]*>.*?</olmap_osmlayer>', $mode, 'plugin_openlayersmapoverlays_osmlayer');
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see DokuWiki_Syntax_Plugin::handle()
+	 */
 	public function handle($match, $state, $pos, &$handler){
 		$param = array ();
 		$data = $this->dflt;;
@@ -68,6 +90,10 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
 		return $data;
 	}
 
+	/**
+	 * (non-PHPdoc)
+	 * @see DokuWiki_Syntax_Plugin::render()
+	 */
 	public function render($mode, &$renderer, $data) {
 		if($mode != 'xhtml') return false;
 
@@ -79,8 +105,8 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
 		foreach ( $data as $key => $val ) {
 			$str .= "'".$key."' : '".$val."',";
 		}
-		$str = substr($str,0,-1) .'}';
-		$renderer->doc .="olMapOverlays['".$overlaynumber."'] = ".$str.";\n//--><!]]></script>";
+		$str .= '"type":"osm"}';
+		$renderer->doc .="olMapOverlays['osm".$overlaynumber."'] = ".$str.";\n//--><!]]></script>";
 		$overlaynumber++;
 		return true;
 	}

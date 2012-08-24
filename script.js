@@ -13,26 +13,51 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
-function olovAddToMap(id, name, url, visible) {
+
+/**
+ * add layers to the map based on the olMapOverlays object.
+ */
+function olovAddToMap() {
 	if (olEnable) {
 		for ( var key in olMapOverlays) {
 			var overlay = olMapOverlays[key];
 			var m = olMaps[overlay.id];
 
-			m.addLayer(new OpenLayers.Layer.OSM(
-					overlay.name, overlay.url, {
-						// transitionEffect : 'resize',
-						isBaseLayer : !1,
-						opacity : parseFloat(overlay.opacity),
-						attribution : overlay.attribution,
-						visibility : (overlay.visible).toLowerCase() == 'true',
-						tileOptions : {
-							crossOriginKeyword : null
-						}
-					}));
+			switch (overlay.type) {
+			case 'osm':
+				m.addLayer(new OpenLayers.Layer.OSM(overlay.name,
+								overlay.url, {
+									// transitionEffect : 'resize',
+									isBaseLayer : !1,
+									opacity : parseFloat(overlay.opacity),
+									attribution : overlay.attribution,
+									visibility : (overlay.visible)
+											.toLowerCase() == 'true',
+									tileOptions : {
+										crossOriginKeyword : null
+									}
+								}));
+				break;
+			case 'wms':
+				m.addLayer(new OpenLayers.Layer.WMS(overlay.name,
+								overlay.url, {
+									layers : overlay.layers,
+									version : overlay.version,
+									transparent : overlay.transparent,
+									format : overlay.format
+								}, {
+									opacity : parseFloat(overlay.opacity),
+									visibility : (overlay.visible)
+											.toLowerCase() == 'true',
+									isBaseLayer : !1,
+									attribution : overlay.attribution
+								}));
+				break;
+			}
 		}
 	}
 }
+
 var olMapOverlays = new Object();
 
 jQuery(olovAddToMap);
