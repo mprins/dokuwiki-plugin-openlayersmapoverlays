@@ -1,8 +1,8 @@
-=== version 1.2-SNAPSHOT ===
-  * use OpenLayers 2.13-rc7
+=== version ${project.version} ===
+  * use OpenLayers 2.13
   
-==1.1==
+=== version 1.1 ===
   * provides WMS support
 
-==1.0==
+=== version 1.0 ===
   * initial release, provides XYZ support
