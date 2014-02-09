@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012-2013 Mark C. Prins <mprins@users.sf.net>
+ * Copyright (c) 2012-2014 Mark C. Prins <mprins@users.sf.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -22,7 +22,9 @@ if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 require_once DOKU_PLUGIN.'syntax.php';
-
+/**
+ * Add OSM style layer to your map.
+ */
 class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugin {
 
 	private $dflt = array (
@@ -96,8 +98,8 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
 	 */
 	public function render($mode, &$renderer, $data) {
 		if($mode != 'xhtml') return false;
-
-		static $overlaynumber = 0; // incremented for each olmap_osmlayer tag in the page source
+		// incremented for each olmap_osmlayer tag in the page source
+		static $overlaynumber = 0; 
 
 		list ($id, $url, $name, $visible) = $data;
 		$renderer->doc .="\n<script type='text/javascript'><!--//--><![CDATA[//><!--\n";

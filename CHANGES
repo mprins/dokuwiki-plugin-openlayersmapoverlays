@@ -1,5 +1,5 @@
 === version ${project.version} ===
-  *
+  * update OpenLayers
 
 === version 1.2 ===
   * use OpenLayers 2.13
