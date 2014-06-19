@@ -14,48 +14,53 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+if (! defined ( 'DOKU_INC' ))
+	die ();
 
-if (!defined('DOKU_INC')) die();
+if (! defined ( 'DOKU_LF' ))
+	define ( 'DOKU_LF', "\n" );
+if (! defined ( 'DOKU_TAB' ))
+	define ( 'DOKU_TAB', "\t" );
+if (! defined ( 'DOKU_PLUGIN' ))
+	define ( 'DOKU_PLUGIN', DOKU_INC . 'lib/plugins/' );
 
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
-require_once DOKU_PLUGIN.'syntax.php';
+require_once DOKU_PLUGIN . 'syntax.php';
 /**
  * Add OSM style layer to your map.
  */
 class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugin {
-
 	private $dflt = array (
-			'id'			=> 'olmap',
-			'name'			=> '',
-			'url'			=> '',
-			'opacity'		=> 0.8,
-			'attribution'	=> '',
-			'visible'		=> false,
-			'cors'			=> null
+			'id' => 'olmap',
+			'name' => '',
+			'url' => '',
+			'opacity' => 0.8,
+			'attribution' => '',
+			'visible' => false,
+			'cors' => null
 	);
 
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see DokuWiki_Syntax_Plugin::getPType()
 	 */
-	public function getPType(){
+	public function getPType() {
 		return 'block';
 	}
 
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see DokuWiki_Syntax_Plugin::getType()
 	 */
 	public function getType() {
-		//return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
+		// return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
 		return 'baseonly';
 	}
 
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see Doku_Parser_Mode::getSort()
 	 */
 	public function getSort() {
@@ -64,52 +69,58 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
 
 	/**
 	 * Connect to our special pattern.
+	 *
 	 * @see Doku_Parser_Mode::connectTo()
 	 */
 	public function connectTo($mode) {
-		//look for: <olmap_osmlayer id="olmap" name="sport" url="http://tiles.openseamap.org/sport/${z}/${x}/${y}.png" visible="false" opacity=0.6 attribution="Some attribution"></olmap_osmlayer>
-		$this->Lexer->addSpecialPattern('<olmap_osmlayer ?[^>\n]*>.*?</olmap_osmlayer>', $mode, 'plugin_openlayersmapoverlays_osmlayer');
+		// look for: <olmap_osmlayer id="olmap" name="sport" url="http://tiles.openseamap.org/sport/${z}/${x}/${y}.png" visible="false" opacity=0.6 attribution="Some attribution"></olmap_osmlayer>
+		$this->Lexer->addSpecialPattern ( '<olmap_osmlayer ?[^>\n]*>.*?</olmap_osmlayer>',
+				$mode, 'plugin_openlayersmapoverlays_osmlayer' );
 	}
 
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see DokuWiki_Syntax_Plugin::handle()
 	 */
-	public function handle($match, $state, $pos, &$handler){
+	public function handle($match, $state, $pos, &$handler) {
 		$param = array ();
-		$data = $this->dflt;;
+		$data = $this->dflt;
 
-		preg_match_all('/(\w*)="(.*?)"/us', $match, $param, PREG_SET_ORDER);
+		preg_match_all ( '/(\w*)="(.*?)"/us', $match, $param, PREG_SET_ORDER );
 
-		foreach ($param as $kvpair) {
-			list ($matched, $key, $val) = $kvpair;
-			if (isset ($data[$key])){
-				$key = strtolower($key);
-				$data[$key] = $val;
+		foreach ( $param as $kvpair ) {
+			list ( $matched, $key, $val ) = $kvpair;
+			if (isset ( $data [$key] )) {
+				$key = strtolower ( $key );
+				$data [$key] = $val;
 			}
 		}
-		dbglog($data,'syntax_plugin_overlayer::handle: parsed data is:');
+		// dbglog($data,'syntax_plugin_overlayer::handle: parsed data is:');
 		return $data;
 	}
 
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see DokuWiki_Syntax_Plugin::render()
 	 */
 	public function render($mode, &$renderer, $data) {
-		if($mode != 'xhtml') return false;
-		// incremented for each olmap_osmlayer tag in the page source
-		static $overlaynumber = 0; 
+		if ($mode != 'xhtml')
+			return false;
 
-		list ($id, $url, $name, $visible) = $data;
-		$renderer->doc .="\n<script type='text/javascript'><!--//--><![CDATA[//><!--\n";
+		// incremented for each olmap_osmlayer tag in the page source
+		static $overlaynumber = 0;
+
+		list ( $id, $url, $name, $visible ) = $data;
+		$renderer->doc .= "\n<script type='text/javascript'><!--//--><![CDATA[//><!--\n";
 		$str = '{';
 		foreach ( $data as $key => $val ) {
-			$str .= "'".$key."' : '".$val."',";
+			$str .= "'" . $key . "' : '" . $val . "',";
 		}
 		$str .= '"type":"osm"}';
-		$renderer->doc .="olMapOverlays['osm".$overlaynumber."'] = ".$str.";\n//--><!]]></script>";
-		$overlaynumber++;
+		$renderer->doc .= "olMapOverlays['osm" . $overlaynumber . "'] = " . $str . ";\n//--><!]]></script>";
+		$overlaynumber ++;
 		return true;
 	}
 }
