@@ -1,5 +1,12 @@
 === version ${project.version} ===
   * use OpenLayers 2.14-dev
+  * sync version number with openlayersmap; as of this version the version numbers should be the same.
+
+=== version 1.4 ===
+  * use OpenLayers 2.14-dev
+
+=== version 1.3 ===
+  * use OpenLayers 2.14-dev
 
 === version 1.2 ===
   * use OpenLayers 2.13
