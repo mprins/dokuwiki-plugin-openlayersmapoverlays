@@ -53,6 +53,57 @@ function olovAddToMap() {
 									attribution : overlay.attribution
 								}));
 				break;
+			case 'mapillary':
+				var mLyr = new OpenLayers.Layer.Vector("Mapillary", {
+					projection : new OpenLayers.Projection("EPSG:4326"),
+					strategies: [new OpenLayers.Strategy.BBOX({
+						// TODO play around with these
+						resFactor: 1, 
+						ratio: 1
+					})],
+					protocol: new OpenLayers.Protocol.HTTP({
+						url: "http://api.mapillary.com/v1/im/search?",
+						format: new OpenLayers.Format.GeoJSON(),
+						params:{
+							'max-results': 50,
+							'geojson': true,
+						},
+						filterToParams: function(filter, params) {
+							if (filter.type === OpenLayers.Filter.Spatial.BBOX) {          
+								// override the bbox serialization of the filter 
+								//   to give the Mapillary specific bounds
+								params['min-lat'] = filter.value.bottom;
+								params['max-lat'] = filter.value.top;
+								params['min-lon'] = filter.value.left;
+								params['max-lon'] = filter.value.right;
+							}
+							return params;
+						}
+					}),
+					styleMap: new OpenLayers.StyleMap({
+						'default':{
+							cursor : "help",
+							rotation : '${ca}',
+							externalGraphic: DOKU_BASE + 'lib/plugins/openlayersmapoverlays/icons/arrow-up-20.png',
+							graphicHeight : 20,
+							graphicWidth : 20,
+						}, 
+						'select':{
+							externalGraphic: DOKU_BASE + 'lib/plugins/openlayersmapoverlays/icons/arrow-up-20-select.png'
+						},
+						'temporary':{
+							label : '${location}',
+							fontSize: "1em",
+							fontFamily: "Courier New, monospace",
+							labelXOffset: "0.5",
+							labelYOffset: "0.5",
+						}
+					}),
+					attribution : "Mapillary (mapillary.com) CC-BY-SA"
+				});
+				m.addLayer(mLyr);
+				selectControl.addLayer(mLyr);
+				break;
 			}
 		}
 	}

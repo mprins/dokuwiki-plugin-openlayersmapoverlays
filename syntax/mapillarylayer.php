@@ -26,9 +26,9 @@ if (! defined ( 'DOKU_PLUGIN' ))
 
 require_once DOKU_PLUGIN . 'syntax.php';
 /**
- * adds a WMS 1.1.1 layer to your map.
+ * Add OSM style layer to your map.
  */
-class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax_Plugin {
 	private $dflt = array (
 			'id' => 'olmap',
 			'name' => '',
@@ -36,10 +36,7 @@ class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugi
 			'opacity' => 0.8,
 			'attribution' => '',
 			'visible' => false,
-			'layers' => '',
-			'version' => '1.1.1',
-			'format' => 'image/png',
-			'transparent' => 'true'
+			'cors' => null
 	);
 
 	/**
@@ -67,7 +64,7 @@ class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugi
 	 * @see Doku_Parser_Mode::getSort()
 	 */
 	public function getSort() {
-		return 902;
+		return 903;
 	}
 
 	/**
@@ -76,9 +73,9 @@ class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugi
 	 * @see Doku_Parser_Mode::connectTo()
 	 */
 	public function connectTo($mode) {
-		// look for: <olmap_wmslayer id="olmap" name="cloud" url="http://openweathermap.org/t/tile.cgi?SERVICE=WMS" attribution="OpenWeatherMap" visible="true" layers="GLBETA_PR"></olmap_wmslayer>
-		$this->Lexer->addSpecialPattern ( '<olmap_wmslayer ?[^>\n]*>.*?</olmap_wmslayer>',
-				$mode, 'plugin_openlayersmapoverlays_wmslayer' );
+		// look for: <olmap_mapillarylayer id="olmap" visible="false"></olmap_osmlayer>
+		$this->Lexer->addSpecialPattern ( '<olmap_mapillarylayer ?[^>\n]*>.*?</olmap_mapillarylayer>',
+				$mode, 'plugin_openlayersmapoverlays_mapillarylayer' );
 	}
 
 	/**
@@ -99,7 +96,7 @@ class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugi
 				$data [$key] = $val;
 			}
 		}
-		// dbglog($data,'syntax_plugin_overlayer::handle: parsed data is:');
+		dbglog($data,'syntax_plugin_overlayer::handle: parsed data is:');
 		return $data;
 	}
 
@@ -117,17 +114,17 @@ class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugi
 			$renderer->doc .= DOKU_LF . '<script type="text/javascript" src="' . DOKU_BASE . 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
 			$loadedOLlib = true;
 		}
-		// incremented for each olmap_wmslayer tag in the page source
+		// incremented for each olmap_osmlayer tag in the page source
 		static $overlaynumber = 0;
 
 		list ( $id, $url, $name, $visible ) = $data;
-		$renderer->doc .= DOKU_LF . "<script type='text/javascript'><!--//--><![CDATA[//><!--" . DOKU_LF;
+		$renderer->doc .= "\n<script type='text/javascript'><!--//--><![CDATA[//><!--\n";
 		$str = '{';
 		foreach ( $data as $key => $val ) {
 			$str .= "'" . $key . "' : '" . $val . "',";
 		}
-		$str .= "'type':'wms'}";
-		$renderer->doc .= "olMapOverlays['wms" . $overlaynumber . "'] = " . $str . ";" . DOKU_LF . "//--><!]]></script>";
+		$str .= '"type":"mapillary"}';
+		$renderer->doc .= "olMapOverlays['mapillary" . $overlaynumber . "'] = " . $str . ";\n//--><!]]></script>";
 		$overlaynumber ++;
 		return true;
 	}
