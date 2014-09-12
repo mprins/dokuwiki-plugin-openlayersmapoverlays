@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012-2014 Mark C. Prins <mprins@users.sf.net>
+ * Copyright (c) 2014 Mark C. Prins <mprins@users.sf.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,21 +26,17 @@ if (! defined ( 'DOKU_PLUGIN' ))
 
 require_once DOKU_PLUGIN . 'syntax.php';
 /**
- * Add OSM style layer to your map.
+ * Add a Mapillary layer to your map.
  */
 class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax_Plugin {
 	private $dflt = array (
 			'id' => 'olmap',
-			'name' => '',
-			'url' => '',
-			'opacity' => 0.8,
-			'attribution' => '',
 			'visible' => false,
-			'cors' => null
+			'skey' => ''
 	);
 
 	/**
-	 * (non-PHPdoc)
+	 *
 	 *
 	 * @see DokuWiki_Syntax_Plugin::getPType()
 	 */
@@ -49,7 +45,7 @@ class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax
 	}
 
 	/**
-	 * (non-PHPdoc)
+	 *
 	 *
 	 * @see DokuWiki_Syntax_Plugin::getType()
 	 */
@@ -59,7 +55,7 @@ class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax
 	}
 
 	/**
-	 * (non-PHPdoc)
+	 *
 	 *
 	 * @see Doku_Parser_Mode::getSort()
 	 */
@@ -73,9 +69,8 @@ class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax
 	 * @see Doku_Parser_Mode::connectTo()
 	 */
 	public function connectTo($mode) {
-		// look for: <olmap_mapillarylayer id="olmap" visible="false"></olmap_osmlayer>
-		$this->Lexer->addSpecialPattern ( '<olmap_mapillarylayer ?[^>\n]*>.*?</olmap_mapillarylayer>',
-				$mode, 'plugin_openlayersmapoverlays_mapillarylayer' );
+		// look for: <olmap_mapillarylayer id="olmap" visible="false"></olmap_mapillarylayer>
+		$this->Lexer->addSpecialPattern ( '<olmap_mapillarylayer ?[^>\n]*>.*?</olmap_mapillarylayer>', $mode, 'plugin_openlayersmapoverlays_mapillarylayer' );
 	}
 
 	/**
@@ -91,12 +86,11 @@ class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax
 
 		foreach ( $param as $kvpair ) {
 			list ( $matched, $key, $val ) = $kvpair;
+			$key = strtolower($key);
 			if (isset ( $data [$key] )) {
-				$key = strtolower ( $key );
-				$data [$key] = $val;
+				$data [$key] = hsc($val);
 			}
 		}
-		dbglog($data,'syntax_plugin_overlayer::handle: parsed data is:');
 		return $data;
 	}
 
@@ -121,9 +115,9 @@ class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax
 		$renderer->doc .= "\n<script type='text/javascript'><!--//--><![CDATA[//><!--\n";
 		$str = '{';
 		foreach ( $data as $key => $val ) {
-			$str .= "'" . $key . "' : '" . $val . "',";
+			$str .= "'" . $key . "':'" . $val . "',";
 		}
-		$str .= '"type":"mapillary"}';
+		$str .= "'type':'mapillary'}";
 		$renderer->doc .= "olMapOverlays['mapillary" . $overlaynumber . "'] = " . $str . ";\n//--><!]]></script>";
 		$overlaynumber ++;
 		return true;

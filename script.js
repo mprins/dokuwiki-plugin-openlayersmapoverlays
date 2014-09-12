@@ -25,82 +25,95 @@ function olovAddToMap() {
 
 			switch (overlay.type) {
 			case 'osm':
-				m.addLayer(new OpenLayers.Layer.OSM(overlay.name,
-								overlay.url, {
-									// transitionEffect : 'resize',
-									isBaseLayer : !1,
-									opacity : parseFloat(overlay.opacity),
-									attribution : overlay.attribution,
-									visibility : (overlay.visible)
-											.toLowerCase() == 'true',
-									tileOptions : {
-										crossOriginKeyword : null
-									}
-								}));
+				m.addLayer(new OpenLayers.Layer.OSM(overlay.name, overlay.url, {
+					isBaseLayer : !1,
+					opacity : parseFloat(overlay.opacity),
+					attribution : overlay.attribution,
+					visibility : (overlay.visible).toLowerCase() == 'true',
+					tileOptions : {
+						crossOriginKeyword : null
+					}
+				}));
 				break;
 			case 'wms':
-				m.addLayer(new OpenLayers.Layer.WMS(overlay.name,
-								overlay.url, {
-									layers : overlay.layers,
-									version : overlay.version,
-									transparent : overlay.transparent,
-									format : overlay.format
-								}, {
-									opacity : parseFloat(overlay.opacity),
-									visibility : (overlay.visible)
-											.toLowerCase() == 'true',
-									isBaseLayer : !1,
-									attribution : overlay.attribution
-								}));
+				m.addLayer(new OpenLayers.Layer.WMS(overlay.name, overlay.url, {
+					layers : overlay.layers,
+					version : overlay.version,
+					transparent : overlay.transparent,
+					format : overlay.format
+				}, {
+					opacity : parseFloat(overlay.opacity),
+					visibility : (overlay.visible).toLowerCase() == 'true',
+					isBaseLayer : !1,
+					attribution : overlay.attribution
+				}));
 				break;
 			case 'mapillary':
-				var mLyr = new OpenLayers.Layer.Vector("Mapillary", {
-					projection : new OpenLayers.Projection("EPSG:4326"),
-					strategies: [new OpenLayers.Strategy.BBOX({
-						// TODO play around with these
-						resFactor: 1, 
-						ratio: 1
-					})],
-					protocol: new OpenLayers.Protocol.HTTP({
-						url: "http://api.mapillary.com/v1/im/search?",
-						format: new OpenLayers.Format.GeoJSON(),
-						params:{
-							'max-results': 50,
-							'geojson': true,
-						},
-						filterToParams: function(filter, params) {
-							if (filter.type === OpenLayers.Filter.Spatial.BBOX) {          
-								// override the bbox serialization of the filter 
-								//   to give the Mapillary specific bounds
-								params['min-lat'] = filter.value.bottom;
-								params['max-lat'] = filter.value.top;
-								params['min-lon'] = filter.value.left;
-								params['max-lon'] = filter.value.right;
-							}
-							return params;
-						}
-					}),
-					styleMap: new OpenLayers.StyleMap({
-						'default':{
-							cursor : "help",
-							rotation : '${ca}',
-							externalGraphic: DOKU_BASE + 'lib/plugins/openlayersmapoverlays/icons/arrow-up-20.png',
-							graphicHeight : 20,
-							graphicWidth : 20,
-						}, 
-						'select':{
-							externalGraphic: DOKU_BASE + 'lib/plugins/openlayersmapoverlays/icons/arrow-up-20-select.png'
-						},
-						'temporary':{
-							label : '${location}',
-							fontSize: "1em",
-							fontFamily: "Courier New, monospace",
-							labelXOffset: "0.5",
-							labelYOffset: "0.5",
-						}
-					}),
-					attribution : "Mapillary (mapillary.com) CC-BY-SA"
-				});
+				var mUrl = 'http://api.mapillary.com/v1/im/search?';
+				if (overlay.skey !== '') {
+					mUrl = 'http://api.mapillary.com/v1/im/sequence?';
+				}
+				var mLyr = new OpenLayers.Layer.Vector(
+						"Mapillary",
+						{
+							projection : new OpenLayers.Projection("EPSG:4326"),
+							strategies : [ new OpenLayers.Strategy.BBOX({
+								ratio : 1.1,
+								resFactor : 1.5
+							}) /* ,new OpenLayers.Strategy.Cluster({}) */],
+							protocol : new OpenLayers.Protocol.HTTP({
+								url : mUrl,
+								format : new OpenLayers.Format.GeoJSON(),
+								params : {
+									// default to max. 250 locations
+									'max-results' : 250,
+									'geojson' : true,
+									'skey' : overlay.skey
+								},
+								filterToParams : function(filter, params) {
+									if (filter.type === OpenLayers.Filter.Spatial.BBOX) {
+										// override the bbox serialization of
+										// the filter to give the Mapillary
+										// specific bounds
+										params['min-lat'] = filter.value.bottom;
+										params['max-lat'] = filter.value.top;
+										params['min-lon'] = filter.value.left;
+										params['max-lon'] = filter.value.right;
+										// if the width of our bbox width is
+										// less than 0.15 degrees drop the max
+										// results
+										if (filter.value.top - filter.value.bottom < .15) {
+											OpenLayers.Console.debug('dropping max-results parameter, width is: ',
+													filter.value.top - filter.value.bottom);
+											params['max-results'] = null;
+										}
+									}
+									return params;
+								}
+							}),
+							styleMap : new OpenLayers.StyleMap({
+								'default' : {
+									cursor : 'help',
+									rotation : '${ca}',
+									externalGraphic : DOKU_BASE
+											+ 'lib/plugins/openlayersmapoverlays/icons/arrow-up-20.png',
+									graphicHeight : 20,
+									graphicWidth : 20,
+								},
+								'select' : {
+									externalGraphic : DOKU_BASE
+											+ 'lib/plugins/openlayersmapoverlays/icons/arrow-up-20-select.png',
+									label : '${location}',
+									fontSize : '1em',
+									fontFamily : 'monospace',
+									labelXOffset : '0.5',
+									labelYOffset : '0.5',
+									labelAlign : 'lb',
+								}
+							}),
+							attribution : '<a href="http://www.mapillary.com/legal.html"><img src="http://mapillary.com/favicon.ico" alt="Mapillary" height="16" width="16" />Mapillary (CC-BY-SA)',
+							visibility : (overlay.visible).toLowerCase() == 'true',
+						});
 				m.addLayer(mLyr);
 				selectControl.addLayer(mLyr);
 				break;
