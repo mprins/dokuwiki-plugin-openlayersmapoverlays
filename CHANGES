@@ -1,6 +1,9 @@
 === version ${project.version} ===
+
+=== version 4.2 ===
   * use OpenLayers 2.14-dev
   * sync version number with openlayersmap; as of this version the version numbers should be the same.
+  * add support for Mapillary
 
 === version 1.4 ===
   * use OpenLayers 2.14-dev
