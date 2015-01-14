@@ -1,5 +1,5 @@
 === version ${project.version} ===
-  *
+  * use latest version of OpenLayers 2.14-dev
 
 === version 4.3 ===
   * use OpenLayers 2.14-dev
