@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2014 Mark C. Prins <mprins@users.sf.net>
+ * Copyright (c) 2012-2015 Mark C. Prins <mprins@users.sf.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -116,6 +116,24 @@ function olovAddToMap() {
 						});
 				m.addLayer(mLyr);
 				selectControl.addLayer(mLyr);
+				break;
+			case 'search':
+				m.addLayer(new OpenLayers.Layer.Vector(
+					overlay.name,
+					overlay.url,
+					{
+					layers : overlay.layers,
+					version : overlay.version,
+					transparent : overlay.transparent,
+					format : overlay.format
+					},
+					{
+					opacity : parseFloat(overlay.opacity),
+					visibility : (overlay.visible).toLowerCase() == 'true',
+					isBaseLayer : !1,
+					attribution : overlay.attribution
+					}
+				));
 				break;
 			}
 		}
