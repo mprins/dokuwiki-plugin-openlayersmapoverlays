@@ -1,4 +1,7 @@
 === version ${project.version} ===
+  * PHP 7 compatibility fixes
+
+=== version 4.6 ===
   * use latest version of OpenLayers 2.14-dev
 
 === version 4.5 ===
