@@ -1,4 +1,11 @@
 === version ${project.version} ===
+  *
+
+=== version 4.9 ===
+  * some PHP 7 fixes
+
+=== version 4.8 ===
+  * -
 
 === version 4.7 ===
   * PHP 7 compatibility fixes
