@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2012-2015 Mark C. Prins <mprins@users.sf.net>
+ * Copyright (c) 2012-2017 Mark C. Prins <mprins@users.sf.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -48,16 +48,27 @@ function olovAddToMap() {
 					attribution : overlay.attribution
 				}));
 				break;
+			case 'ags':
+				m.addLayer(new OpenLayers.Layer.ArcGIS93Rest(overlay.name, overlay.url, {
+					layers : overlay.layers,
+					transparent : overlay.transparent,
+					format : overlay.format
+				}, {
+					opacity : parseFloat(overlay.opacity),
+					visibility : (overlay.visible).toLowerCase() == 'true',
+					isBaseLayer : !1,
+					attribution : overlay.attribution
+				}));
+				break;
 			case 'mapillary':
 				var mUrl = 'http://api.mapillary.com/v1/im/search?';
 				if (overlay.skey !== '') {
 					mUrl = 'http://api.mapillary.com/v1/im/sequence?';
 				}
 				var mLyr = new OpenLayers.Layer.Vector(
-						"Mapillary",
-						{
-							projection : new OpenLayers.Projection("EPSG:4326"),
-							strategies : [ new OpenLayers.Strategy.BBOX({
+						"Mapillary", {
+							    projection : new OpenLayers.Projection("EPSG:4326"),
+							    strategies : [ new OpenLayers.Strategy.BBOX({
 								ratio : 1.1,
 								resFactor : 1.5
 							}) /* ,new OpenLayers.Strategy.Cluster({}) */],
@@ -122,16 +133,15 @@ function olovAddToMap() {
 					overlay.name,
 					overlay.url,
 					{
-					layers : overlay.layers,
-					version : overlay.version,
-					transparent : overlay.transparent,
-					format : overlay.format
-					},
-					{
-					opacity : parseFloat(overlay.opacity),
-					visibility : (overlay.visible).toLowerCase() == 'true',
-					isBaseLayer : !1,
-					attribution : overlay.attribution
+                        layers : overlay.layers,
+                        version : overlay.version,
+                        transparent : overlay.transparent,
+                        format : overlay.format
+					}, {
+                        opacity : parseFloat(overlay.opacity),
+                        visibility : (overlay.visible).toLowerCase() == 'true',
+                        isBaseLayer : !1,
+                        attribution : overlay.attribution
 					}
 				));
 				break;

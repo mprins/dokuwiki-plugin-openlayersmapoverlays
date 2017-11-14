@@ -1,4 +1,7 @@
 === version ${project.version} ===
+  * add support for ArcGIS REST export service
+
+=== version 4.11 ===
   * use latest version of OpenLayers 2.14-dev
 
 === version 4.10 ===
