@@ -1,4 +1,5 @@
 === version ${project.version} ===
+  * made in conjunction with the openlayersmap plugin version ${project.version}
 
 === version 4.12 ===
   * add support for ArcGIS REST export service
