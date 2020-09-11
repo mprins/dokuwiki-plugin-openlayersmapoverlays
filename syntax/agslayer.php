@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2017 Mark C. Prins <mprins@users.sf.net>
+ * Copyright (c) 2017-2020 Mark C. Prins <mprins@users.sf.net>
  *
  * Permission to use, copy, modify, and distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -113,20 +113,20 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
 
 		static $loadedOLlib = false;
 		if (! $loadedOLlib) {
-			$renderer->doc .= DOKU_LF . '<script type="text/javascript" src="' . DOKU_BASE . 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
+			$renderer->doc .= DOKU_LF . '<script charset="utf-8" defer="defer" src="' . DOKU_BASE . 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
 			$loadedOLlib = true;
 		}
 		// incremented for each olmap_agslayer tag in the page source
 		static $overlaynumber = 0;
 
 		list ( $id, $url, $name, $visible ) = $data;
-		$renderer->doc .= DOKU_LF . "<script type='text/javascript'><!--//--><![CDATA[//><!--" . DOKU_LF;
+		$renderer->doc .= DOKU_LF . '<script charset="utf-8" defer="defer" src="data:text/javascript;base64,';
 		$str = '{';
 		foreach ( $data as $key => $val ) {
 			$str .= "'" . $key . "' : '" . $val . "',";
 		}
 		$str .= "'type':'ags'}";
-		$renderer->doc .= "olMapOverlays['ags" . $overlaynumber . "'] = " . $str . ";" . DOKU_LF . "//--><!]]></script>";
+		$renderer->doc .= base64_encode("olMapOverlays['ags" . $overlaynumber . "'] = " . $str . ";") . '"></script>';
 		$overlaynumber ++;
 		return true;
 	}

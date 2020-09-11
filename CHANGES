@@ -1,4 +1,7 @@
 === version ${project.version} ===
+  * load inline javascript deferred
+
+=== version 4.14 ==
   * made in conjunction with the openlayersmap plugin version ${project.version}
 
 === version 4.13 ===

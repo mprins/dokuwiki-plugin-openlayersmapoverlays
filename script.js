@@ -35,6 +35,55 @@ function olovAddToMap() {
 					}
 				}));
 				break;
+//			case 'wmts':
+//			    var format = new OpenLayers.Format.WMTSCapabilities();
+//			    OpenLayers.Request.GET({
+//                    url: overlay.url,
+//                    params: {
+//                        SERVICE: "WMTS",
+//                        VERSION: "1.0.0",
+//                        REQUEST: "GetCapabilities"
+//                    },
+//                   success: function(request) {
+//                       var doc = request.responseXML;
+//                       if (!doc || !doc.documentElement) {
+//                           doc = request.responseText;
+//                       }
+//                       var capabilities = format.read(doc);
+//                       var layer = format.createLayer(capabilities, {
+//                            name: overlay.name,
+//                            layer: overlay.layer,
+//                            matrixSet: overlay.matrixSet,
+//                            format: overlay.format,
+//                            style: overlay.style,
+//                            opacity: parseFloat(overlay.opacity),
+//                            isBaseLayer: !1
+//                       });
+//                       map.addLayer(layer);
+//                   },
+//                   failure: function() {
+//                       alert("Trouble getting capabilities doc");
+//                       OpenLayers.Console.error.apply(OpenLayers.Console, arguments);
+//                   }
+//               });
+
+//				m.addLayer(new OpenLayers.Layer.WMTS({
+//				    name: overlay.name,
+//				    url: overlay.url,
+//				    layer: overlay.layer,
+//				    style: overlay.style,
+//					isBaseLayer: !1,
+//					matrixSet: overlay.matrixSet,
+//					//matrixIds: overlay.matrixIds,
+//					format: overlay.format,
+//					opacity : parseFloat(overlay.opacity),
+//					attribution : overlay.attribution,
+//					visibility : (overlay.visible).toLowerCase() == 'true',
+//					tileOptions : {
+//						crossOriginKeyword : null
+//					}
+//				}));
+				break;
 			case 'wms':
 				m.addLayer(new OpenLayers.Layer.WMS(overlay.name, overlay.url, {
 					layers : overlay.layers,
