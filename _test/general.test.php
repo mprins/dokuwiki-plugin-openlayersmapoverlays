@@ -24,48 +24,45 @@
  */
 class general_plugin_openlayersmapoverlays_test extends DokuWikiTest {
 
-    protected $pluginsEnabled = array('openlayersmapoverlays','geophp', 'openlayersmap');
+    protected $pluginsEnabled = array('openlayersmapoverlays', 'geophp', 'openlayersmap');
 
     /**
-     * Simple test to make sure the plugin.info.txt is in correct format
+     * Simple test to make sure the plugin.info.txt is in correct format.
      */
-    public function test_plugininfo() {
-        $file = __DIR__.'/../plugin.info.txt';
-        $this->assertFileExists($file);
+    final public function test_plugininfo(): void {
+        $file = __DIR__ . '/../plugin.info.txt';
+        self::assertFileExists($file);
 
         $info = confToHash($file);
 
-        $this->assertArrayHasKey('base', $info);
-        $this->assertArrayHasKey('author', $info);
-        $this->assertArrayHasKey('email', $info);
-        $this->assertArrayHasKey('date', $info);
-        $this->assertArrayHasKey('name', $info);
-        $this->assertArrayHasKey('desc', $info);
-        $this->assertArrayHasKey('url', $info);
+        self::assertArrayHasKey('base', $info);
+        self::assertArrayHasKey('author', $info);
+        self::assertArrayHasKey('email', $info);
+        self::assertArrayHasKey('date', $info);
+        self::assertArrayHasKey('name', $info);
+        self::assertArrayHasKey('desc', $info);
+        self::assertArrayHasKey('url', $info);
 
-        $this->assertEquals('openlayersmapoverlays', $info['base']);
-        $this->assertRegExp('/^https?:\/\//', $info['url']);
-        $this->assertTrue(mail_isvalid($info['email']));
-        $this->assertRegExp('/^\d\d\d\d-\d\d-\d\d$/', $info['date']);
-        $this->assertTrue(false !== strtotime($info['date']));
+        self::assertEquals('openlayersmapoverlays', $info['base']);
+        self::assertRegExp('/^https?:\/\//', $info['url']);
+        self::assertTrue(mail_isvalid($info['email']));
+        self::assertRegExp('/^\d\d\d\d-\d\d-\d\d$/', $info['date']);
+        self::assertTrue(false !== strtotime($info['date']));
     }
 
     /**
      * test if plugin is loaded.
      */
-    public function test_plugin_openlayersmapoverlays_isloaded() {
+    final public function test_plugin_openlayersmapoverlays_isloaded(): void {
         global $plugin_controller;
-        $this->assertTrue(
-                    in_array('geophp', $plugin_controller->getList()),
-                    "geophp plugin is loaded"
-                            );
-        $this->assertTrue(
-                    in_array('openlayersmap', $plugin_controller->getList()),
-                    "openlayersmap plugin is loaded"
-                            );
-        $this->assertTrue(
-                    in_array('openlayersmapoverlays', $plugin_controller->getList()),
-                    "openlayersmapoverlays plugin is loaded"
-                            );
+        self::assertContains(
+            'geophp', $plugin_controller->getList(), "geophp plugin is loaded"
+        );
+        self::assertContains(
+            'openlayersmap', $plugin_controller->getList(), "openlayersmap plugin is loaded"
+        );
+        self::assertContains(
+            'openlayersmapoverlays', $plugin_controller->getList(), "openlayersmapoverlays plugin is loaded"
+        );
     }
 }

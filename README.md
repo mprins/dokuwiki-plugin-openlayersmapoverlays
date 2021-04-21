@@ -1,6 +1,6 @@
 # Overlay add-on for the openlayersmap plugin for DokuWiki
 
-![logo](https://raw.githubusercontent.com/mprins/dokuwiki-plugin-openlayersmap/blob/master/logo.gif)
+![logo](https://raw.githubusercontent.com/mprins/dokuwiki-plugin-openlayersmap/master/logo.gif)
 
 Provides a syntax for rendering additional map layers in the OpenLayers based map in a wiki page.
 
