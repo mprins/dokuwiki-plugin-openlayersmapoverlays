@@ -13,113 +13,111 @@
  * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * @phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
  */
-if (! defined ( 'DOKU_INC' ))
-	die ();
 
-if (! defined ( 'DOKU_LF' ))
-	define ( 'DOKU_LF', "\n" );
-if (! defined ( 'DOKU_TAB' ))
-	define ( 'DOKU_TAB', "\t" );
-if (! defined ( 'DOKU_PLUGIN' ))
-	define ( 'DOKU_PLUGIN', DOKU_INC . 'lib/plugins/' );
-
-require_once DOKU_PLUGIN . 'syntax.php';
 /**
  * Add a Mapillary layer to your map.
  */
 class syntax_plugin_openlayersmapoverlays_mapillarylayer extends DokuWiki_Syntax_Plugin {
-	private $dflt = array (
-			'id' => 'olmap',
-			'visible' => false,
-			'skey' => ''
-	);
+    private $dflt = array(
+        'id'      => 'olmap',
+        'visible' => false,
+        'skey'    => ''
+    );
 
-	/**
-	 *
-	 *
-	 * @see DokuWiki_Syntax_Plugin::getPType()
-	 */
-	public function getPType() {
-		return 'block';
-	}
+    /**
+     *
+     *
+     * @see DokuWiki_Syntax_Plugin::getPType()
+     */
+    public function getPType(): string {
+        return 'block';
+    }
 
-	/**
-	 *
-	 *
-	 * @see DokuWiki_Syntax_Plugin::getType()
-	 */
-	public function getType() {
-		// return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
-		return 'baseonly';
-	}
+    /**
+     *
+     *
+     * @see DokuWiki_Syntax_Plugin::getType()
+     */
+    public function getType(): string {
+        // return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
+        return 'baseonly';
+    }
 
-	/**
-	 *
-	 *
-	 * @see Doku_Parser_Mode::getSort()
-	 */
-	public function getSort() {
-		return 903;
-	}
+    /**
+     *
+     *
+     * @see Doku_Parser_Mode::getSort()
+     */
+    public function getSort(): int {
+        return 903;
+    }
 
-	/**
-	 * Connect to our special pattern.
-	 *
-	 * @see Doku_Parser_Mode::connectTo()
-	 */
-	public function connectTo($mode) {
-		// look for: <olmap_mapillarylayer id="olmap" visible="false"></olmap_mapillarylayer>
-		$this->Lexer->addSpecialPattern ( '<olmap_mapillarylayer ?[^>\n]*>.*?</olmap_mapillarylayer>', $mode, 'plugin_openlayersmapoverlays_mapillarylayer' );
-	}
+    /**
+     * Connect to our special pattern.
+     *
+     * @see Doku_Parser_Mode::connectTo()
+     */
+    public function connectTo($mode): void {
+        // look for: <olmap_mapillarylayer id="olmap" visible="false"></olmap_mapillarylayer>
+        $this->Lexer->addSpecialPattern(
+            '<olmap_mapillarylayer ?[^>\n]*>.*?</olmap_mapillarylayer>', $mode,
+            'plugin_openlayersmapoverlays_mapillarylayer'
+        );
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see DokuWiki_Syntax_Plugin::handle()
-	 */
-	public function handle($match, $state, $pos, Doku_Handler $handler) {
-		$param = array ();
-		$data = $this->dflt;
+    /**
+     * (non-PHPdoc)
+     *
+     * @see DokuWiki_Syntax_Plugin::handle()
+     */
+    public function handle($match, $state, $pos, Doku_Handler $handler): array {
+        $param = array();
+        $data  = $this->dflt;
 
-		preg_match_all ( '/(\w*)="(.*?)"/us', $match, $param, PREG_SET_ORDER );
+        preg_match_all('/(\w*)="(.*?)"/us', $match, $param, PREG_SET_ORDER);
 
-		foreach ( $param as $kvpair ) {
-			list ( $matched, $key, $val ) = $kvpair;
-			$key = strtolower($key);
-			if (isset ( $data [$key] )) {
-				$data [$key] = hsc($val);
-			}
-		}
-		return $data;
-	}
+        foreach($param as $kvpair) {
+            list ($matched, $key, $val) = $kvpair;
+            $key = strtolower($key);
+            if(isset ($data [$key])) {
+                $data [$key] = hsc($val);
+            }
+        }
+        return $data;
+    }
 
-	/**
-	 * (non-PHPdoc)
-	 *
-	 * @see DokuWiki_Syntax_Plugin::render()
-	 */
-	public function render($mode, Doku_Renderer $renderer, $data) {
-		if ($mode != 'xhtml')
-			return false;
+    /**
+     * (non-PHPdoc)
+     *
+     * @see DokuWiki_Syntax_Plugin::render()
+     */
+    public function render($format, Doku_Renderer $renderer, $data): bool {
+        if($format !== 'xhtml') {
+            return false;
+        }
 
-		static $loadedOLlib = false;
-		if (! $loadedOLlib) {
-			$renderer->doc .= DOKU_LF . '<script charset="utf-8" defer="defer" src="' . DOKU_BASE . 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
-			$loadedOLlib = true;
-		}
-		// incremented for each olmap_osmlayer tag in the page source
-		static $overlaynumber = 0;
+        static $loadedOLlib = false;
+        if(!$loadedOLlib) {
+            $renderer->doc .= DOKU_LF . '<script defer="defer" src="' . DOKU_BASE
+                . 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
+            $loadedOLlib   = true;
+        }
+        // incremented for each olmap_osmlayer tag in the page source
+        static $overlaynumber = 0;
 
-		list ( $id, $url, $name, $visible ) = $data;
-		$renderer->doc .= DOKU_LF . '<script charset="utf-8" defer="defer" src="data:text/javascript;base64,';
-		$str = '{';
-		foreach ( $data as $key => $val ) {
-			$str .= "'" . $key . "':'" . $val . "',";
-		}
-		$str .= "'type':'mapillary'}";
-		$renderer->doc .= base64_encode("olMapOverlays['mapillary" . $overlaynumber . "'] = " . $str . ";") . '"></script>';
-		$overlaynumber ++;
-		return true;
-	}
+        list ($id, $url, $name, $visible) = $data;
+        $renderer->doc .= DOKU_LF . '<script defer="defer" src="data:text/javascript;base64,';
+        $str           = '{';
+        foreach($data as $key => $val) {
+            $str .= "'" . $key . "':'" . $val . "',";
+        }
+        $str           .= "'type':'mapillary'}";
+        $renderer->doc .= base64_encode("olMapOverlays['mapillary" . $overlaynumber . "'] = " . $str . ";")
+            . '"></script>';
+        $overlaynumber++;
+        return true;
+    }
 }
