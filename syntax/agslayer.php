@@ -20,7 +20,8 @@
 /**
  * adds a AGS layer to your map.
  */
-class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugin
+{
     private $dflt = array(
         'id'          => 'olmap',
         'name'        => '',
@@ -38,7 +39,8 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::getPType()
      */
-    public function getPType(): string {
+    public function getPType(): string
+    {
         return 'block';
     }
 
@@ -47,7 +49,8 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::getType()
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         // return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
         return 'baseonly';
     }
@@ -57,7 +60,8 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
      *
      * @see Doku_Parser_Mode::getSort()
      */
-    public function getSort(): int {
+    public function getSort(): int
+    {
         return 904;
     }
 
@@ -66,7 +70,8 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
      *
      * @see Doku_Parser_Mode::connectTo()
      */
-    public function connectTo($mode): void {
+    public function connectTo($mode): void
+    {
         // look for: <olmap_agslayer id="olmap" name="cloud"
         // url="http://geoservices2.wallonie.be/arcgis/rest/services/APP_KAYAK/KAYAK/MapServer/export"
         // attribution="wallonie.be" visible="true" layers="show:0,1,2,3,4,7"></olmap_agslayer>
@@ -74,7 +79,8 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
         // http://geoservices2.wallonie.be/arcgis/rest/services/APP_KAYAK/KAYAK/MapServer/export?LAYERS=show%3A0%2C1%2C2%2C3%2C4%2C7&TRANSPARENT=true&FORMAT=png&BBOX=643294.029959%2C6467184.088252%2C645740.014863%2C6469630.073157&SIZE=256%2C256&F=html&BBOXSR=3857&IMAGESR=3857
         $this->Lexer->addSpecialPattern(
             '<olmap_agslayer ?[^>\n]*>.*?</olmap_agslayer>',
-            $mode, 'plugin_openlayersmapoverlays_agslayer'
+            $mode,
+            'plugin_openlayersmapoverlays_agslayer'
         );
     }
 
@@ -83,15 +89,16 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::handle()
      */
-    public function handle($match, $state, $pos, Doku_Handler $handler): array {
+    public function handle($match, $state, $pos, Doku_Handler $handler): array
+    {
         $param = array();
         $data  = $this->dflt;
 
         preg_match_all('/(\w*)="(.*?)"/us', $match, $param, PREG_SET_ORDER);
 
-        foreach($param as $kvpair) {
+        foreach ($param as $kvpair) {
             list ($matched, $key, $val) = $kvpair;
-            if(isset ($data [$key])) {
+            if (isset ($data [$key])) {
                 $key         = strtolower($key);
                 $data [$key] = $val;
             }
@@ -104,13 +111,14 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::render()
      */
-    public function render($format, Doku_Renderer $renderer, $data): bool {
-        if($format !== 'xhtml') {
+    public function render($format, Doku_Renderer $renderer, $data): bool
+    {
+        if ($format !== 'xhtml') {
             return false;
         }
 
         static $loadedOLlib = false;
-        if(!$loadedOLlib) {
+        if (!$loadedOLlib) {
             $renderer->doc .= DOKU_LF . '<script defer="defer" src="' . DOKU_BASE .
                 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
             $loadedOLlib   = true;
@@ -121,7 +129,7 @@ class syntax_plugin_openlayersmapoverlays_agslayer extends DokuWiki_Syntax_Plugi
         list ($id, $url, $name, $visible) = $data;
         $renderer->doc .= DOKU_LF . '<script defer="defer" src="data:text/javascript;base64,';
         $str           = '{';
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
             $str .= "'" . $key . "' : '" . $val . "',";
         }
         $str           .= "'type':'ags'}";

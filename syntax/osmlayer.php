@@ -20,7 +20,8 @@
 /**
  * Add OSM style layer to your map.
  */
-class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugin
+{
     private $dflt = array(
         'id'          => 'olmap',
         'name'        => '',
@@ -36,7 +37,8 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::getPType()
      */
-    public function getPType(): string {
+    public function getPType(): string
+    {
         return 'block';
     }
 
@@ -45,7 +47,8 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::getType()
      */
-    public function getType(): string {
+    public function getType(): string
+    {
         // return 'FIXME: container|baseonly|formatting|substition|protected|disabled|paragraphs';
         return 'baseonly';
     }
@@ -55,7 +58,8 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
      *
      * @see Doku_Parser_Mode::getSort()
      */
-    public function getSort(): int {
+    public function getSort(): int
+    {
         return 902;
     }
 
@@ -64,12 +68,14 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
      *
      * @see Doku_Parser_Mode::connectTo()
      */
-    public function connectTo($mode): void {
+    public function connectTo($mode): void
+    {
         // look for: <olmap_osmlayer id="olmap" name="sport" url="http://tiles.openseamap.org/sport/${z}/${x}/${y}.png"
         // visible="false" opacity=0.6 attribution="Some attribution"></olmap_osmlayer>
         $this->Lexer->addSpecialPattern(
             '<olmap_osmlayer ?[^>\n]*>.*?</olmap_osmlayer>',
-            $mode, 'plugin_openlayersmapoverlays_osmlayer'
+            $mode,
+            'plugin_openlayersmapoverlays_osmlayer'
         );
     }
 
@@ -78,15 +84,16 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::handle()
      */
-    public function handle($match, $state, $pos, Doku_Handler $handler): array {
+    public function handle($match, $state, $pos, Doku_Handler $handler): array
+    {
         $param = array();
         $data  = $this->dflt;
 
         preg_match_all('/(\w*)="(.*?)"/us', $match, $param, PREG_SET_ORDER);
 
-        foreach($param as $kvpair) {
+        foreach ($param as $kvpair) {
             list ($matched, $key, $val) = $kvpair;
-            if(isset ($data [$key])) {
+            if (isset ($data [$key])) {
                 $key         = strtolower($key);
                 $data [$key] = $val;
             }
@@ -100,8 +107,9 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
      *
      * @see DokuWiki_Syntax_Plugin::render()
      */
-    public function render($format, Doku_Renderer $renderer, $data): bool {
-        if($format !== 'xhtml') {
+    public function render($format, Doku_Renderer $renderer, $data): bool
+    {
+        if ($format !== 'xhtml') {
             return false;
         }
 
@@ -109,9 +117,9 @@ class syntax_plugin_openlayersmapoverlays_osmlayer extends DokuWiki_Syntax_Plugi
         static $overlaynumber = 0;
 
         list ($id, $url, $name, $visible) = $data;
-        $renderer->doc .= DOKU_LF . '<script  defer="defer" src="data:text/javascript;base64,';
+        $renderer->doc .= DOKU_LF . '<script defer="defer" src="data:text/javascript;base64,';
         $str           = '{';
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
             $str .= "'" . $key . "' : '" . $val . "',";
         }
         $str           .= '"type":"osm"}';
