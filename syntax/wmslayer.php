@@ -116,12 +116,6 @@ class syntax_plugin_openlayersmapoverlays_wmslayer extends DokuWiki_Syntax_Plugi
             return false;
         }
 
-        static $loadedOLlib = false;
-        if (!$loadedOLlib) {
-            $renderer->doc .= DOKU_LF . '<script defer="defer" src="' . DOKU_BASE
-                . 'lib/plugins/openlayersmapoverlays/lib/layers.js' . '"></script>';
-            $loadedOLlib   = true;
-        }
         // incremented for each olmap_wmslayer tag in the page source
         static $overlaynumber = 0;
 
