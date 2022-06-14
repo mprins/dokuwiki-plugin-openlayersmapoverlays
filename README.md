@@ -1,3 +1,7 @@
+# ARCHIVED
+
+** This repository has been archived all functionality has been moved into [dokuwiki-plugin-openlayersmap](https://github.com/mprins/dokuwiki-plugin-openlayersmap) **
+
 # Overlay add-on for the openlayersmap plugin for DokuWiki
 
 ![logo](https://raw.githubusercontent.com/mprins/dokuwiki-plugin-openlayersmap/master/logo.gif)
